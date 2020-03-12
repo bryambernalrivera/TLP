@@ -1,0 +1,9 @@
+Palabra: {abab}
+Abecedario: {ab}
+Numero de nodos: {2}
+0.0: {a/1/0}
+0.1: {a/0/1}
+1.0: {b/1/1}
+1.1: {a/0/0}
+Estados finales: {1}
+{00}
