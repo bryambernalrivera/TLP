@@ -3,12 +3,9 @@
 
 typedef struct matrx matrx;
 
-struct matrx{ char entrada [10]; char salida [10]; char siguiente [10];};
+struct matrx{ char *entrada; char *salida ;};
 
-//gcc core.c -Wall -Werror -Wextra -o main
-
-//FUNCION GUARDAR DATOS
-
+//Funcion para buscar datos
 int buscar_char(char *b, char c)
 {
 	while (*b != '\0')
@@ -19,7 +16,8 @@ int buscar_char(char *b, char c)
 	}
 	return 0;
 }
-int guardar_datos(char *datos, char * entrada, char * salida, char *siguiente)
+//Funcion para guardar datos.
+int guardar_datos(char *datos, char * entrada, char * salida)
 {
 	int i;
 	int j;
@@ -34,32 +32,25 @@ int guardar_datos(char *datos, char * entrada, char * salida, char *siguiente)
 			j++;
 		}
 		entrada[j] = '\0';
+
 		j = 0;
 		i = i + 1;
-		while( datos[i] != '/')
+		while( datos[i] != '\0')
 		{
 			salida[j] = datos[i];
 			i++;
 			j++;
 		}
 		salida[j] = '\0';
-		j = 0;
-		i = i + 1;
-		while( datos[i] != '\0')
-		{
-			siguiente[j] = datos[i];
-			i++;
-			j++;
-		}
-		siguiente[j] = '\0';
 return 0;
 }
-//FUNCION LEE DATOS/ SI HAY DATOS Y TODO VA BIEN RETORNA AUX > 0,
+//Funcion para leer datos de .txt
 int leer_dato(FILE *fp, char *salida)
 {
 char caracter;
 int aux;
 char *tmp_ptr;
+
 
 aux = 0;
 while((caracter = fgetc(fp)) != '\n' && caracter != EOF)
@@ -100,7 +91,7 @@ int main(void)
 	int n_est;
 //Abrimos el fichero
 
-	aux = 1;
+	aux = 2;
 	palabra_entrada = malloc(aux * sizeof(char));
 	abecedario = malloc(aux * sizeof(char));
 	n_estados = malloc(aux * sizeof(char));
@@ -110,7 +101,7 @@ int main(void)
 	estados_finales = malloc(aux * sizeof(char));
 	nombre = malloc(aux * sizeof(char));
 
-	fp = fopen ( "configuracion.txt", "r" );
+	fp = fopen ( "configuracionC.txt", "r" );
 	if (fp==NULL) {fputs ("File error",stderr); exit (1);}
 
 	leer_dato(fp,nombre);
@@ -119,48 +110,22 @@ int main(void)
 	leer_dato(fp,palabra_entrada);
 	leer_dato(fp,abecedario);
 	leer_dato(fp,estados_finales);
-/*
-	printf ("nombre \n");
-	printf("-%s-\n",nombre);
-
-	printf ("N_ESTADOS \n");
-	printf("-%s-\n",n_estados);
-
-	printf ("PALABRA \n");
-	printf("-%s-\n",palabra_entrada);
-
-	printf ("ABECEDARIO \n");
-	printf("-%s-\n",abecedario);
-
-	printf ("Estados finales \n");
-	printf("-%s-\n",estados_finales);
-*/
-
 
 //Declaramos una Matriz y guardamos los datos en la estructura
 
 	struct matrx matriz[n_est][n_est];
-// PONER AQUI TU MATRIZ QUITANDO ESTA
-// matriz * [n][n];
+//Guardamos datos en la matriz
 	for(int i = 0; i < n_est ; i++)
 		{
 			for(int j = 0; j < n_est ;j++)
 			{
 				leer_dato(fp,datos);
-				guardar_datos(datos,matriz[i][j].entrada,matriz[i][j].salida,matriz[i][j].siguiente);
-				//AQUI SE PUEDE GUARDAR DIRECTAMENTE LOS VALORES
-				// matriz[i][j] = datos;
+
+				matriz[i][j].entrada = malloc(sizeof(datos)* sizeof(char));
+				matriz[i][j].salida = malloc(sizeof(datos) * sizeof(char));
+				guardar_datos(datos,matriz[i][j].entrada,matriz[i][j].salida);
 			}
 		}
-//FOR PARA PINTAR
-for(int i = 0; i < n_est ; i++)
-	{
-		for(int j = 0; j < n_est ;j++)
-		{
-			//printf("ENTRADA: %s SALIDA: %s SIGUIENTE: %s \n", matriz[i][j].entrada,matriz[i][j].salida,matriz[i][j].siguiente);
-		}
-		}
-//ALGORITMO AUTOMATA
 
 int k;
 int i;
@@ -174,7 +139,8 @@ j = 0;
 while (palabra_entrada[k] != '\0')
 {
 	//printf("i: %i j: %i ",i,j);
-	//printf("entrada: %s ", matriz[i][j].entrada);
+	//printf("palabra entrada: %c ", palabra_entrada[k]);
+	//printf("palabras posibles %s\n",matriz[i][j].entrada);
 	//printf("Buscar %i\n",buscar_char(matriz[i][j].entrada, palabra_entrada[k]));
 	if(buscar_char(matriz[i][j].entrada, palabra_entrada[k]))
 	{
@@ -183,7 +149,6 @@ while (palabra_entrada[k] != '\0')
 		j = 0;
 		k++;
 	}
-
 	else
 	{
 		if (!(buscar_char(abecedario,palabra_entrada[k])))
@@ -196,6 +161,38 @@ while (palabra_entrada[k] != '\0')
 	}
 
 }
+
+// NO ESTA IMPLEMENTADO PERO SERIA OTRA MANERA DE FORMA DIRECTA
+/*
+char f;
+
+while((f = fgetc(fp)) != EOF)
+{
+	printf("%c",f);
+	//printf("palabra entrada: %c ", palabra_entrada[k]);
+	//printf("palabras posibles %s\n",matriz[i][j].entrada);
+	//printf("Buscar %i\n",buscar_char(matriz[i][j].entrada, palabra_entrada[k]));
+	if(buscar_char(matriz[i][j].entrada,f))
+	{
+		printf("%s", matriz[i][j].salida);
+		i = j;
+		j = 0;
+		//k++;
+	}
+	else
+	{
+		if (!(buscar_char(abecedario,f)))
+		{
+			printf("ERROR\n");
+			return 0;
+		}
+
+		j++;
+	}
+
+}
+*/
+
 printf("\n");
 
 if (buscar_char(estados_finales,i + '0'))

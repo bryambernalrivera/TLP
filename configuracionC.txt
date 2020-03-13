@@ -1,0 +1,9 @@
+Nombre: {ModeloC}
+Numero de estados: {2}
+Palabra: {abab}
+Abecedario: {ab}
+Estados finales: {1}
+0.0: { / }
+0.1: {a/0}
+1.0: {b/1}
+1.1: { / }
