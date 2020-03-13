@@ -1,9 +1,15 @@
-Palabra: {abab}
+Nombre: {ModeloA}
+Numero de estados: {3}
+Palabra: {abbbbba}
 Abecedario: {ab}
-Numero de nodos: {2}
-0.0: {a/1/0}
-0.1: {a/0/1}
-1.0: {b/1/1}
-1.1: {a/0/0}
-Estados finales: {1}
-{00}
+Estados finales: {2}
+0.0: { / / }
+0.1: {a/b/1}
+0.2: { / / }
+1.0: { / / }
+1.1: {b/c/1}
+1.2: {a/ccc/ }
+2.0: { / / }
+2.1: { / / }
+2.2: { / / }
+

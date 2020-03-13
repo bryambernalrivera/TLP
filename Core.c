@@ -7,10 +7,18 @@ struct matrx{ char entrada [10]; char salida [10]; char siguiente [10];};
 
 //gcc core.c -Wall -Werror -Wextra -o main
 
-//FUNCION LEE DATOS/ SI HAY DATOS Y TODO VA BIEN RETORNA AUX > 0,
- //EN CASO CONTRARIO RETORNA 0
+//FUNCION GUARDAR DATOS
 
-
+int buscar_char(char *b, char c)
+{
+	while (*b != '\0')
+	{
+		if(*b == c)
+			return 1;
+		b++;
+	}
+	return 0;
+}
 int guardar_datos(char *datos, char * entrada, char * salida, char *siguiente)
 {
 	int i;
@@ -46,7 +54,7 @@ int guardar_datos(char *datos, char * entrada, char * salida, char *siguiente)
 		siguiente[j] = '\0';
 return 0;
 }
-
+//FUNCION LEE DATOS/ SI HAY DATOS Y TODO VA BIEN RETORNA AUX > 0,
 int leer_dato(FILE *fp, char *salida)
 {
 char caracter;
@@ -78,21 +86,18 @@ while((caracter = fgetc(fp)) != '\n' && caracter != EOF)
 int main(void)
 {
 
-//Declaracion de variables.
-
 	FILE *fp;
-	//struct matrx{ char entrada; char salida [10]; char siguiente [5];};
 	struct n_final{ char final [10];};
 	int aux;
-	char caracter;
 	char *palabra_entrada;
 	char *abecedario;
-	char *tmp_ptr;
 	char *n_estados;
+	char *estados_finales;
 	char *n_e_finales;
 	char *datos;
+	char *nombre;
 	char *palabra_salida;
-	int n;
+	int n_est;
 //Abrimos el fichero
 
 	aux = 1;
@@ -102,33 +107,44 @@ int main(void)
 	n_e_finales = malloc(aux * sizeof(char));
 	datos = malloc(aux * sizeof(char));
 	palabra_salida = malloc(aux * sizeof(char));
-
+	estados_finales = malloc(aux * sizeof(char));
+	nombre = malloc(aux * sizeof(char));
 
 	fp = fopen ( "configuracion.txt", "r" );
 	if (fp==NULL) {fputs ("File error",stderr); exit (1);}
 
-	leer_dato(fp,palabra_entrada);
-	printf ("PALABRA \n");
-	printf("-%s-\n",palabra_entrada);
-
-	leer_dato(fp,abecedario);
-	printf ("ABECEDARIO \n");
-	printf("-%s-\n",abecedario);
-
+	leer_dato(fp,nombre);
 	leer_dato(fp,n_estados);
+	n_est = atoi(n_estados);
+	leer_dato(fp,palabra_entrada);
+	leer_dato(fp,abecedario);
+	leer_dato(fp,estados_finales);
+/*
+	printf ("nombre \n");
+	printf("-%s-\n",nombre);
+
 	printf ("N_ESTADOS \n");
 	printf("-%s-\n",n_estados);
 
-	n = atoi(n_estados);
+	printf ("PALABRA \n");
+	printf("-%s-\n",palabra_entrada);
+
+	printf ("ABECEDARIO \n");
+	printf("-%s-\n",abecedario);
+
+	printf ("Estados finales \n");
+	printf("-%s-\n",estados_finales);
+*/
+
 
 //Declaramos una Matriz y guardamos los datos en la estructura
 
-	struct matrx matriz[n][n];
+	struct matrx matriz[n_est][n_est];
 // PONER AQUI TU MATRIZ QUITANDO ESTA
 // matriz * [n][n];
-	for(int i = 0; i < n ; i++)
+	for(int i = 0; i < n_est ; i++)
 		{
-			for(int j = 0; j < n ;j++)
+			for(int j = 0; j < n_est ;j++)
 			{
 				leer_dato(fp,datos);
 				guardar_datos(datos,matriz[i][j].entrada,matriz[i][j].salida,matriz[i][j].siguiente);
@@ -137,40 +153,58 @@ int main(void)
 			}
 		}
 //FOR PARA PINTAR
-	for(int i = 0; i < n ; i++)
+for(int i = 0; i < n_est ; i++)
+	{
+		for(int j = 0; j < n_est ;j++)
 		{
-			for(int j = 0; j < n ;j++)
-			{
-				printf("ENTRADA: %s SALIDA: %s SIGUIENTE: %s \n", matriz[i][j].entrada,matriz[i][j].salida,matriz[i][j].siguiente);
-			}
+			//printf("ENTRADA: %s SALIDA: %s SIGUIENTE: %s \n", matriz[i][j].entrada,matriz[i][j].salida,matriz[i][j].siguiente);
 		}
-
+		}
 //ALGORITMO AUTOMATA
-/*
+
+int k;
 int i;
 int j;
-int k;
 
 k = 0;
-while (palabra_entrada != '\n')
-{
-	if(palabra_entrada == matriz[i][j].entrada)
-	{
-		if (!(tmp_ptr = realloc(palabra_salida,strlen(matriz[i][j].salida))))
-			return 0;
-		palabra_salida = tmp_ptr;
-		while (matriz[i][j].salida != '\0')
-		{
+i = 0;
+j = 0;
 
-		}
-		i = matriz[i][j].siguiente - '0';
+
+while (palabra_entrada[k] != '\0')
+{
+	//printf("i: %i j: %i ",i,j);
+	//printf("entrada: %s ", matriz[i][j].entrada);
+	//printf("Buscar %i\n",buscar_char(matriz[i][j].entrada, palabra_entrada[k]));
+	if(buscar_char(matriz[i][j].entrada, palabra_entrada[k]))
+	{
+		printf("%s", matriz[i][j].salida);
+		i = j;
 		j = 0;
+		k++;
+	}
+
+	else
+	{
+		if (!(buscar_char(abecedario,palabra_entrada[k])))
+		{
+			printf("ERROR\n");
+			return 0;
+		}
+
+		j++;
 	}
 
 }
+printf("\n");
 
+if (buscar_char(estados_finales,i + '0'))
+	printf("Se ha reconocido la palabra");
+else
+	printf("No se ha reconocido la palabra");
 
-*/
+printf("\n");
+
     fclose ( fp );
 	return (1);
 }
