@@ -1,0 +1,5 @@
+Modelo_A
+aaabbababa
+3
+0 0 1
+$ ac $ $ bc accc $ $ $
